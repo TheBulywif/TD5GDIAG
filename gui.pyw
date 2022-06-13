@@ -1,5 +1,6 @@
 import os
 import threading
+import time
 from tkinter import *
 from tkinter import messagebox, ttk
 from tkinter import filedialog
@@ -8,7 +9,6 @@ import pythoncom
 import wmi
 
 import dvrlog_parse
-import TD5GTools
 from threading import Thread
 
 import opFormat
@@ -75,72 +75,21 @@ def placeholder():
 
 
 def terminate_services():
-    names = ["apache",
-             "mysql",
-             "java",
-             "TD monitor",
-             "server",
-             "qtlogtodb",
-             "gps",
-             "mss",
-             "tdservice",
-             "eventservice",
-             "relay266",
-             "tdval"]
-    services = [TD5GTools.apache_off,
-                TD5GTools.mysql_off,
-                TD5GTools.java_off,
-                TD5GTools.monitor_off,
-                TD5GTools.server_off,
-                TD5GTools.qtlogtodb_off,
-                TD5GTools.gps_off,
-                TD5GTools.mss_off,
-                TD5GTools.tdservice_off,
-                TD5GTools.eventsservice_off,
-                TD5GTools.relay266_off,
-                TD5GTools.tdval_off]
-    for service in services:
-        for name in names:
-            if str(service).__contains__(name):
-                outputText.insert(END, f"Terminating: {name}" + '\n')
-                service()
-
+    os.startfile("TD5GStop.bat")
+    outputText.insert(END, "TD5G Services Stopped\n")
 
 def activate_services():
-    names = ["apache",
-             "mysql",
-             "java",
-             "TD monitor",
-             "server",
-             "qtlogtodb",
-             "gps",
-             "mss",
-             "tdservice",
-             "eventservice",
-             "relay266",
-             "tdval"]
-    services = [TD5GTools.apache_off,
-                TD5GTools.mysql_off,
-                TD5GTools.java_off,
-                TD5GTools.monitor_off,
-                TD5GTools.server_off,
-                TD5GTools.qtlogtodb_off,
-                TD5GTools.gps_off,
-                TD5GTools.mss_off,
-                TD5GTools.tdservice_off,
-                TD5GTools.eventsservice_off,
-                TD5GTools.relay266_off,
-                TD5GTools.tdval_off]
-    for service in services:
-        for name in names:
-            if str(service).__contains__(name):
-                outputText.insert(END, f"Activating: {name}" + '\n')
-                service()
+    os.startfile("TD5GStart.bat")
+    outputText.insert(END, "TD5G Services Started\n")
 
 
 def reboot_services():
+    outputText.insert(END, "TD5G Service Reboot Starting\n")
     terminate_services()
+    time.sleep(3)
     activate_services()
+    time.sleep(3)
+    outputText.insert(END, "TD5G Service Reboot Complete\n")
 
 
 def td5gServices():
