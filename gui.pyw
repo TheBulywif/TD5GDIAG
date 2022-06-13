@@ -4,15 +4,11 @@ import time
 from tkinter import *
 from tkinter import messagebox, ttk
 from tkinter import filedialog
-
 import pythoncom
 import wmi
-
 import dvrlog_parse
 from threading import Thread
-
-import opFormat
-import processes
+import global_funcs
 
 version = '1.1.0'
 windows = []
@@ -23,7 +19,6 @@ network_thread = Thread
 server_thread = Thread
 td5g_thread = Thread
 options_thread = Thread
-
 proc_list = ["TDMonitor.exe", "TDService.exe", "EventsService.exe", "GPSLogConvertor.exe", "httpd.exe",
              "mysqld.exe", "javaw.exe", "relay266.exe", "QTLogToDB.exe", "mss.exe", "MSSUploadServer.exe",
              "TeamViewer.exe", "airControl2Server.exe", "extsvr.exe", "tdavlservice2.exe"]
@@ -35,12 +30,13 @@ def manual():
                         f"<placeholder>")
 
 
+# PARSE USER SELECTED LOG FILE
 def parse_log():
     outputText.insert(END, "Please Select DVRLog File" + '\n')
     file = filedialog.askopenfilename(initialdir=os.path.join(os.path.join(os.environ['USERPROFILE']),
                                                               'Desktop', 'TD5G Diagnostics'))
     outputText.insert(END, f"File Selected: {file}" + '\n')
-    outputText.insert(END, f"Reading {file} and formatting for Parse")
+    outputText.insert(END, f"Reading {file} and formatting for Parse. . . . .")
     lines = dvrlog_parse.read_log(file)
     dvrLogFilters = [dvrlog_parse.parseMCUVersion(lines), dvrlog_parse.parseDVRFirmware(lines),
                      dvrlog_parse.parseRecMode(lines), dvrlog_parse.parseExitRecMode(lines),
@@ -51,6 +47,7 @@ def parse_log():
         outputText.insert(END, f"{dvrLogFilter}" + '\n')
 
 
+# SEARCH USER PC FOR DVRLOGS AND PARSE ALL FOUND
 def auto_log_parse():
     try:
         outputText.insert(END, f"Beginning System Scan for DVRLogs" + '\n')
@@ -68,21 +65,26 @@ def auto_log_parse():
         print(e)
 
 
+# PLACEHOLDER RESPONSE FOR GUI
 def placeholder():
     outputText.insert(END, "This function is still under development" + '\n')
     outputText.insert(END, "Contact: MarkL@surveillance-247.com for assistance / feedback." + '\n')
     outputText.insert(END, "Thank you." + '\n')
 
 
+# TERMINATE ALL TD5G SERVICES
 def terminate_services():
     os.startfile("TD5GStop.bat")
     outputText.insert(END, "TD5G Services Stopped\n")
 
+
+# ACTIVATE ALL TD5G SERVICES
 def activate_services():
     os.startfile("TD5GStart.bat")
     outputText.insert(END, "TD5G Services Started\n")
 
 
+# REBOOT ALL TD5G SERVICES
 def reboot_services():
     outputText.insert(END, "TD5G Service Reboot Starting\n")
     terminate_services()
@@ -92,13 +94,14 @@ def reboot_services():
     outputText.insert(END, "TD5G Service Reboot Complete\n")
 
 
+# CHECK SYSTEM FOR RUNNING TD5G SERVICES
 def td5gServices():
     running_services = []
     pythoncom.CoInitialize()
     f = wmi.WMI()
-    header1 = opFormat.center("PROCESS", 20)
-    header2 = opFormat.center("ID", 6)
-    header3 = opFormat.center("STATE", 7)
+    header1 = global_funcs.center("PROCESS", 20)
+    header2 = global_funcs.center("ID", 6)
+    header3 = global_funcs.center("STATE", 7)
     outputText.insert(END, "| {:<19} | {:<4} | {:<7} |\n".format(header1, header2, header3))
     for process in f.win32_Process():
         running_services.append(process)
@@ -113,15 +116,15 @@ def td5gServices():
                 state = 0
         if state == 1:
             print(state)
-            data1 = opFormat.center(var, 20)
-            data2 = opFormat.center(str(process.processId), 6)
-            data3 = opFormat.center("RUNNING", 7)
+            data1 = global_funcs.center(var, 20)
+            data2 = global_funcs.center(str(process.processId), 6)
+            data3 = global_funcs.center("RUNNING", 7)
             outputText.insert(END, "| {:<19} | {:<4} | {:<7} |\n".format(data1, data2, data3))
         elif state == 0:
             print(state)
-            data1 = opFormat.center(var, 20)
-            data2 = opFormat.center(str("NAN"), 6)
-            data3 = opFormat.center("STOPPED", 7)
+            data1 = global_funcs.center(var, 20)
+            data2 = global_funcs.center(str("NAN"), 6)
+            data3 = global_funcs.center("STOPPED", 7)
             outputText.insert(END, "| {:<19} | {:<4} | {:<7} |\n".format(data1, data2, data3))
 
 

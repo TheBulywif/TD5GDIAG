@@ -2,10 +2,10 @@ import logging
 from datetime import datetime
 import os
 
-
 # CREATE LOGGER
 logger = logging.getLogger('TD5G Diagnostic')
 logger.setLevel(logging.DEBUG)
+
 
 # *******END LOGGER*******
 def init_logger():
